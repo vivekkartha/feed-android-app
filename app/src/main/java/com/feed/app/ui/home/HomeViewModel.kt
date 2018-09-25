@@ -1,4 +1,7 @@
 package com.feed.app.ui.home
 
-class HomeViewModel {
+import android.arch.lifecycle.ViewModel
+
+class HomeViewModel: ViewModel() {
+
 }
