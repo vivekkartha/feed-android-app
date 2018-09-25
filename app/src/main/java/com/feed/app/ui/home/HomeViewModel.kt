@@ -11,7 +11,7 @@ import io.reactivex.schedulers.Schedulers
 
 class HomeViewModel(private var feedRepository: FeedRepository = app().feedRepository) : ViewModel() {
 
-  private var feedLiveData: MutableLiveData<Feed> = MutableLiveData()
+  var feedLiveData: MutableLiveData<Feed> = MutableLiveData()
 
   @SuppressLint("CheckResult")
   fun getFeed() {
