@@ -1,4 +1,4 @@
-package com.feed.app.home
+package com.feed.app.ui.home
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
