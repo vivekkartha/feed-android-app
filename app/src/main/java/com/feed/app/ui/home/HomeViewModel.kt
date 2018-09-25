@@ -3,21 +3,26 @@ package com.feed.app.ui.home
 import android.annotation.SuppressLint
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import com.feed.app.data.Feed
 import com.feed.app.data.FeedRepository
+import com.feed.app.data.FeedResponse
+import com.feed.app.data.Status
 import com.feed.app.utils.di.app
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
 
 class HomeViewModel(private var feedRepository: FeedRepository = app().feedRepository) : ViewModel() {
 
-  var feedLiveData: MutableLiveData<Feed> = MutableLiveData()
+  var feedLiveData: MutableLiveData<Status> = MutableLiveData()
 
   @SuppressLint("CheckResult")
   fun getFeed() {
     feedRepository.getFeed()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
-        .subscribe(feedLiveData::setValue)
+        .subscribeBy(onNext = { feed ->
+          feedLiveData.value =Status.SUCCESS(feed)
+        },
+            onError = { feedLiveData.value = Status.ERROR("Unable to fetch feed") })
   }
 }
