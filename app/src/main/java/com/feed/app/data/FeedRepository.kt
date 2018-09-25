@@ -1,5 +1,8 @@
 package com.feed.app.data
 
-class FeedRepository {
-  fun getFeed()=
+import com.feed.app.data.network.WebService
+import io.reactivex.Observable
+
+class FeedRepository(private var webService: WebService) {
+  fun getFeed(): Observable<Feed> =  webService.getAllFeed()
 }

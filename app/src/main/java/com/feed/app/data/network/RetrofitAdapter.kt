@@ -7,10 +7,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-class RetrofitAdapter {
+object RetrofitAdapter {
   private var webservice: WebService? = null
+  private const val endPoint = "https://dl.dropboxusercontent.com/"
 
-  fun getService(endPoint: String): WebService {
+  fun getService(): WebService {
     if (webservice == null) {
       configRestAdapter(endPoint)
     }
@@ -24,12 +25,14 @@ class RetrofitAdapter {
     // set your desired log level
     loggingInterceptor.level = HttpLoggingInterceptor.Level.NONE
 
-    okBuilder = OkHttpClient.Builder().addInterceptor(loggingInterceptor)
+    okBuilder = OkHttpClient.Builder()
+        .addInterceptor(loggingInterceptor)
     okHttpClient = okBuilder
         .connectTimeout(60, TimeUnit.SECONDS)
         .build()
 
-    val retrofit = Retrofit.Builder().baseUrl(host)
+    val retrofit = Retrofit.Builder()
+        .baseUrl(host)
         .addConverterFactory(GsonConverterFactory.create())
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .client(okHttpClient)
