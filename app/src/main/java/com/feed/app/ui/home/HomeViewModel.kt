@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.feed.app.data.FeedRepository
-import com.feed.app.data.FeedResponse
 import com.feed.app.data.Status
 import com.feed.app.utils.di.app
 import io.reactivex.android.schedulers.AndroidSchedulers

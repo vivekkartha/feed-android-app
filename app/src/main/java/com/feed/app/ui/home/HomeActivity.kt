@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.widget.Toast
 import com.feed.app.R
 import com.feed.app.data.FeedItem
@@ -35,6 +36,7 @@ class HomeActivity : AppCompatActivity() {
 
   private fun initList() {
     feedRecyclerAdapter = FeedRecyclerAdapter(feedList, this)
+    rvFeed.layoutManager = LinearLayoutManager(this)
     rvFeed.adapter = feedRecyclerAdapter
   }
 
