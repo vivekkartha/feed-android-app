@@ -26,18 +26,29 @@ class HomeActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.home_activity)
     injectDependencies()
-    val viewModel = ViewModelProviders.of(this)
-        .get(HomeViewModel::class.java)
-    initList()
+    val viewModel = getViewModel()
+    setAdapterAndLayoutManagerToRecyclerView()
+    /** Listen to feed response */
     observeOnFeedResponseStatus(viewModel)
+    /**Fetch the feed*/
     viewModel.getFeed()
+    handleErrorRefreshClick(viewModel)
   }
+
+  private fun handleErrorRefreshClick(viewModel: HomeViewModel) {
+    tvError.setOnClickListener {
+      viewModel.getFeed()
+    }
+  }
+
+  private fun getViewModel() = ViewModelProviders.of(this)
+      .get(HomeViewModel::class.java)
 
   private fun injectDependencies() {
     FeedComponent.instance = FeedModule()
   }
 
-  private fun initList() {
+  private fun setAdapterAndLayoutManagerToRecyclerView() {
     feedRecyclerAdapter = FeedRecyclerAdapter(feedList, this)
     rvFeed.layoutManager = LinearLayoutManager(this)
     rvFeed.adapter = feedRecyclerAdapter
@@ -46,19 +57,23 @@ class HomeActivity : AppCompatActivity() {
   private fun observeOnFeedResponseStatus(viewModel: HomeViewModel) {
     viewModel.feedLiveData.observe(this, Observer { status ->
       when (status) {
-        is SUCCESS -> {
-          hideProgress()
-          tvError.visibility = View.GONE
-          supportActionBar?.title = status.feed.title
-          setFeedToList(status.feed.rows)
-        }
-        is ERROR -> {
-          hideProgress()
-          showError()
-        }
+        is SUCCESS -> onFeedReceived(status)
+        is ERROR -> onFeedError()
         is LOADING -> showProgress()
       }
     })
+  }
+
+  private fun onFeedError() {
+    hideProgress()
+    showError()
+  }
+
+  private fun onFeedReceived(status: SUCCESS) {
+    hideProgress()
+    tvError.visibility = View.GONE
+    supportActionBar?.title = status.feed.title
+    setFeedToList(status.feed.rows)
   }
 
   private fun hideProgress() {
@@ -67,6 +82,7 @@ class HomeActivity : AppCompatActivity() {
 
   private fun showProgress() {
     progressBar.visibility = View.VISIBLE
+    tvError.visibility = View.GONE
   }
 
   private fun showError() {
