@@ -16,11 +16,12 @@ class HomeViewModel(private var feedRepository: FeedRepository = app().feedRepos
 
   @SuppressLint("CheckResult")
   fun getFeed() {
+    feedLiveData.value = Status.LOADING
     feedRepository.getFeed()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
         .subscribeBy(onNext = { feed ->
-          feedLiveData.value =Status.SUCCESS(feed)
+          feedLiveData.value = Status.SUCCESS(feed)
         },
             onError = { feedLiveData.value = Status.ERROR("Unable to fetch feed") })
   }

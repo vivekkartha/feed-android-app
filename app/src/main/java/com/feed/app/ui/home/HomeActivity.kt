@@ -5,13 +5,16 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.View
 import android.widget.Toast
 import com.feed.app.R
 import com.feed.app.data.FeedItem
 import com.feed.app.data.Status.ERROR
+import com.feed.app.data.Status.LOADING
 import com.feed.app.data.Status.SUCCESS
 import com.feed.app.utils.di.FeedComponent
 import com.feed.app.utils.di.FeedModule
+import kotlinx.android.synthetic.main.home_activity.progressBar
 import kotlinx.android.synthetic.main.home_activity.rvFeed
 
 class HomeActivity : AppCompatActivity() {
@@ -43,10 +46,26 @@ class HomeActivity : AppCompatActivity() {
   private fun observeOnFeedResponseStatus(viewModel: HomeViewModel) {
     viewModel.feedLiveData.observe(this, Observer { status ->
       when (status) {
-        is SUCCESS -> setFeedToList(status.feed.rows)
-        is ERROR -> showError()
+        is SUCCESS -> {
+          hideProgress()
+          supportActionBar?.title = status.feed.title
+          setFeedToList(status.feed.rows)
+        }
+        is ERROR -> {
+          hideProgress()
+          showError()
+        }
+        is LOADING -> showProgress()
       }
     })
+  }
+
+  private fun hideProgress() {
+    progressBar.visibility = View.GONE
+  }
+
+  private fun showProgress() {
+    progressBar.visibility = View.VISIBLE
   }
 
   private fun showError() {

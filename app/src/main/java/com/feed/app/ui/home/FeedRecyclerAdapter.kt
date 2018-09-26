@@ -35,6 +35,8 @@ class FeedRecyclerAdapter(
     holder.apply {
       Picasso.get()
           .load(feed.imageHref)
+          .placeholder(R.drawable.ic_def)
+          .error(R.drawable.ic_def)
           .into(ivFeed)
       tvTitle.text = feed.title
       tvDescription.text = feed.description

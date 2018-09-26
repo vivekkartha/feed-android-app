@@ -14,4 +14,5 @@ class FeedItem(
 sealed class Status {
   data class ERROR(var msg: String) : Status()
   data class SUCCESS(var feed: Feed) : Status()
+  object LOADING : Status()
 }
