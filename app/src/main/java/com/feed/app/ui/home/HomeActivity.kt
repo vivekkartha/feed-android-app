@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
-import android.widget.Toast
 import com.feed.app.R
 import com.feed.app.data.FeedItem
 import com.feed.app.data.Status.ERROR
@@ -16,6 +15,7 @@ import com.feed.app.utils.di.FeedComponent
 import com.feed.app.utils.di.FeedModule
 import kotlinx.android.synthetic.main.home_activity.progressBar
 import kotlinx.android.synthetic.main.home_activity.rvFeed
+import kotlinx.android.synthetic.main.home_activity.tvError
 
 class HomeActivity : AppCompatActivity() {
 
@@ -48,6 +48,7 @@ class HomeActivity : AppCompatActivity() {
       when (status) {
         is SUCCESS -> {
           hideProgress()
+          tvError.visibility = View.GONE
           supportActionBar?.title = status.feed.title
           setFeedToList(status.feed.rows)
         }
@@ -69,8 +70,7 @@ class HomeActivity : AppCompatActivity() {
   }
 
   private fun showError() {
-    Toast.makeText(this, "Unable to fetch", Toast.LENGTH_SHORT)
-        .show()
+    tvError.visibility = View.VISIBLE
   }
 
   private fun setFeedToList(feed: List<FeedItem>) {
