@@ -7,3 +7,5 @@ A feed app for android written in Kotlin, following MVVM
 * OkHttp
 * Picasso
 * Architecture Components
+#### Architecture
+UI <- ViewModel <- Respository <- Web/Storage
