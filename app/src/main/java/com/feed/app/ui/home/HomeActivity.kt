@@ -15,6 +15,7 @@ import com.feed.app.utils.di.FeedComponent
 import com.feed.app.utils.di.FeedModule
 import kotlinx.android.synthetic.main.home_activity.progressBar
 import kotlinx.android.synthetic.main.home_activity.rvFeed
+import kotlinx.android.synthetic.main.home_activity.swipe
 import kotlinx.android.synthetic.main.home_activity.tvError
 
 class HomeActivity : AppCompatActivity() {
@@ -33,6 +34,9 @@ class HomeActivity : AppCompatActivity() {
     /**Fetch the feed*/
     viewModel.getFeed()
     handleErrorRefreshClick(viewModel)
+    swipe.setOnRefreshListener {
+      viewModel.getFeed(showLoading = false)
+    }
   }
 
   private fun handleErrorRefreshClick(viewModel: HomeViewModel) {
@@ -71,13 +75,14 @@ class HomeActivity : AppCompatActivity() {
 
   private fun onFeedReceived(status: SUCCESS) {
     hideProgress()
-    tvError.visibility = View.GONE
+    swipe?.isRefreshing=false
+    tvError?.visibility = View.GONE
     supportActionBar?.title = status.feed.title
     setFeedToList(status.feed.rows)
   }
 
   private fun hideProgress() {
-    progressBar.visibility = View.GONE
+    progressBar?.visibility = View.GONE
   }
 
   private fun showProgress() {
@@ -86,6 +91,7 @@ class HomeActivity : AppCompatActivity() {
   }
 
   private fun showError() {
+    swipe?.isRefreshing=false
     tvError.visibility = View.VISIBLE
   }
 

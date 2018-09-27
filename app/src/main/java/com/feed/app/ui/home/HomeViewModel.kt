@@ -15,8 +15,9 @@ class HomeViewModel(private var feedRepository: FeedRepository = app().feedRepos
   var feedLiveData: MutableLiveData<Status> = MutableLiveData()
 
   @SuppressLint("CheckResult")
-  fun getFeed() {
-    feedLiveData.value = Status.LOADING
+  fun getFeed(showLoading: Boolean = true) {
+    if (showLoading)
+      feedLiveData.value = Status.LOADING
     feedRepository.getFeed()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
