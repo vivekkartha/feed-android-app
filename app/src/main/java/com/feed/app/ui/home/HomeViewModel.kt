@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.feed.app.data.FeedRepository
-import com.feed.app.data.Status
+import com.feed.app.data.database.entity.Status
 import com.feed.app.utils.di.app
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.subscribeBy
@@ -22,7 +22,10 @@ class HomeViewModel(private var feedRepository: FeedRepository = app().feedRepos
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
         .subscribeBy(onNext = { feed ->
-          feedLiveData.value = Status.SUCCESS(feed)
+          when {
+            feed.rows.isEmpty() -> feedLiveData.value = Status.ERROR("No feeds")
+            else -> feedLiveData.value = Status.SUCCESS(feed)
+          }
         },
             onError = { feedLiveData.value = Status.ERROR("Unable to fetch feed") })
   }

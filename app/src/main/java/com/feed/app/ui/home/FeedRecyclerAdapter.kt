@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.feed.app.R
-import com.feed.app.data.FeedItem
+import com.feed.app.data.database.entity.FeedItem
 import com.squareup.picasso.Picasso
 
 class FeedRecyclerAdapter(

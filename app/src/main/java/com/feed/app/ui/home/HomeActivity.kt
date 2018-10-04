@@ -2,15 +2,16 @@ package com.feed.app.ui.home
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import com.feed.app.R
-import com.feed.app.data.FeedItem
-import com.feed.app.data.Status.ERROR
-import com.feed.app.data.Status.LOADING
-import com.feed.app.data.Status.SUCCESS
+import com.feed.app.data.database.entity.FeedItem
+import com.feed.app.data.database.entity.Status.ERROR
+import com.feed.app.data.database.entity.Status.LOADING
+import com.feed.app.data.database.entity.Status.SUCCESS
 import com.feed.app.utils.di.FeedComponent
 import com.feed.app.utils.di.FeedModule
 import kotlinx.android.synthetic.main.home_activity.progressBar
@@ -26,7 +27,7 @@ class HomeActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.home_activity)
-    injectDependencies()
+    injectDependencies(this)
     val viewModel = getViewModel()
     setAdapterAndLayoutManagerToRecyclerView()
     /** Listen to feed response */
@@ -48,8 +49,8 @@ class HomeActivity : AppCompatActivity() {
   private fun getViewModel() = ViewModelProviders.of(this)
       .get(HomeViewModel::class.java)
 
-  private fun injectDependencies() {
-    FeedComponent.instance = FeedModule()
+  private fun injectDependencies(context:Context) {
+    FeedComponent.instance = FeedModule(context)
   }
 
   private fun setAdapterAndLayoutManagerToRecyclerView() {
