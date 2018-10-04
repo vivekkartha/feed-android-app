@@ -32,7 +32,7 @@ class HomeActivity : AppCompatActivity() {
     /** Listen to feed response */
     observeOnFeedResponseStatus(viewModel)
     /**Fetch the feed*/
-    viewModel.getFeed()
+    if (savedInstanceState == null) viewModel.getFeed()
     handleErrorRefreshClick(viewModel)
     swipe.setOnRefreshListener {
       viewModel.getFeed(showLoading = false)
@@ -75,7 +75,7 @@ class HomeActivity : AppCompatActivity() {
 
   private fun onFeedReceived(status: SUCCESS) {
     hideProgress()
-    swipe?.isRefreshing=false
+    swipe?.isRefreshing = false
     tvError?.visibility = View.GONE
     supportActionBar?.title = status.feed.title
     setFeedToList(status.feed.rows)
@@ -91,7 +91,7 @@ class HomeActivity : AppCompatActivity() {
   }
 
   private fun showError() {
-    swipe?.isRefreshing=false
+    swipe?.isRefreshing = false
     tvError.visibility = View.VISIBLE
   }
 
