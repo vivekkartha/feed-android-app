@@ -30,17 +30,32 @@ class FeedDaoTest {
   }
 
   @Test
-  fun insertion_Test() {
-    val feed = getFeed()
+  fun insertAll_Test() {
+    val feed = getFeed(1)
     feedDao.insertAll(feed)
     feedDao.getAll()
         .test()
-        .assertValue { feed -> feed.rows.size == 1 }
+        .assertValue { feeds -> feeds.rows.size == 2 }
   }
 
-  private fun getFeed(): Feed = Feed(
-      1, "Title", listOf(
-      FeedItem(title = "itemTitle", description = "description", imageHref = "www.test.com")
-  )
-  )
+  @Test
+  fun getAll_Test() {
+    val feed = getFeed(3)
+    feedDao.insertAll(feed)
+    feedDao.getAll()
+        .test()
+        .assertValueCount(1)
+  }
+
+  private fun getFeed(n: Int): Feed {
+    val feedItems = mutableListOf<FeedItem>()
+    repeat(n) {
+      feedItems.add(
+          FeedItem(
+              title = "itemTitle$n", description = "description$n", imageHref = "www.test$n.com"
+          )
+      )
+    }
+    return Feed(1, "Title", feedItems)
+  }
 }
