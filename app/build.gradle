@@ -7,10 +7,11 @@ android {
   compileSdkVersion 28
   defaultConfig {
     applicationId "com.feed.app"
-    minSdkVersion 15
+    minSdkVersion 21
     targetSdkVersion 28
     versionCode 1
     versionName "1.0"
+    multiDexEnabled true
     testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
   }
   buildTypes {
@@ -56,10 +57,14 @@ dependencies {
   implementation "android.arch.persistence.room:runtime:$room"
   implementation "android.arch.persistence.room:rxjava2:$room"
   kapt "android.arch.persistence.room:compiler:$room"
+  //CardView
+  implementation 'com.android.support:cardview-v7:28.0.0'
   //Room Testing
   androidTestImplementation 'com.android.support.test:rules:1.0.2'
   androidTestImplementation "android.arch.persistence.room:testing:$room"
   androidTestImplementation "android.arch.core:core-testing:1.1.1"
+  implementation 'com.android.support:multidex:1.0.3'
+
 }
 repositories {
   mavenCentral()
