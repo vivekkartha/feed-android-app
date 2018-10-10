@@ -3,10 +3,12 @@ package com.feed.app.ui.home
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
+import android.widget.Toast
 import com.feed.app.R
 import com.feed.app.data.database.entity.FeedItem
 import com.feed.app.data.database.entity.Status.ERROR
@@ -32,24 +34,38 @@ class HomeActivity : AppCompatActivity() {
     setAdapterAndLayoutManagerToRecyclerView()
     /** Listen to feed response */
     observeOnFeedResponseStatus(viewModel)
-    /**Fetch the feed*/
+    if (!isNetworkAvailable()) showError()
+    /**Fetch the feed */
     if (savedInstanceState == null) viewModel.getFeed()
+
     handleErrorRefreshClick(viewModel)
     swipe.setOnRefreshListener {
-      viewModel.getFeed(showLoading = false)
+      if (!isNetworkAvailable()) {
+        warnNoInternet()
+        dismissRefresh()
+      } else viewModel.getFeed(showLoading = false)
     }
+  }
+
+  private fun dismissRefresh() {
+    swipe?.isRefreshing = false
+  }
+
+  private fun warnNoInternet() {
+    Toast.makeText(this, "You are offline.", Toast.LENGTH_SHORT)
+        .show()
   }
 
   private fun handleErrorRefreshClick(viewModel: HomeViewModel) {
     tvError.setOnClickListener {
-      viewModel.getFeed()
+      if(isNetworkAvailable()) viewModel.getFeed() else warnNoInternet()
     }
   }
 
   private fun getViewModel() = ViewModelProviders.of(this)
       .get(HomeViewModel::class.java)
 
-  private fun injectDependencies(context:Context) {
+  private fun injectDependencies(context: Context) {
     FeedComponent.instance = FeedModule(context)
   }
 
@@ -59,12 +75,19 @@ class HomeActivity : AppCompatActivity() {
     rvFeed.adapter = feedRecyclerAdapter
   }
 
+  private fun isNetworkAvailable(): Boolean {
+    val connectivityManager =
+      getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+    val activeNetworkInfo = connectivityManager!!.activeNetworkInfo
+    return activeNetworkInfo != null && activeNetworkInfo.isConnected
+  }
+
   private fun observeOnFeedResponseStatus(viewModel: HomeViewModel) {
     viewModel.feedLiveData.observe(this, Observer { status ->
       when (status) {
         is SUCCESS -> onFeedReceived(status)
         is ERROR -> onFeedError()
-        is LOADING -> showProgress()
+        is LOADING -> if (isNetworkAvailable()) showProgress()
       }
     })
   }
@@ -76,7 +99,7 @@ class HomeActivity : AppCompatActivity() {
 
   private fun onFeedReceived(status: SUCCESS) {
     hideProgress()
-    swipe?.isRefreshing = false
+    dismissRefresh()
     tvError?.visibility = View.GONE
     supportActionBar?.title = status.feed.title
     setFeedToList(status.feed.rows)
@@ -92,7 +115,7 @@ class HomeActivity : AppCompatActivity() {
   }
 
   private fun showError() {
-    swipe?.isRefreshing = false
+    dismissRefresh()
     tvError.visibility = View.VISIBLE
   }
 

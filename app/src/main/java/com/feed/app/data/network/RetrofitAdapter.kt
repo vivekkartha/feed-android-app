@@ -30,7 +30,6 @@ object RetrofitAdapter {
     okHttpClient = okBuilder
         .connectTimeout(60, TimeUnit.SECONDS)
         .build()
-
     val retrofit = Retrofit.Builder()
         .baseUrl(host)
         .addConverterFactory(GsonConverterFactory.create())

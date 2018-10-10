@@ -16,17 +16,18 @@ class HomeViewModel(private var feedRepository: FeedRepository = app().feedRepos
 
   @SuppressLint("CheckResult")
   fun getFeed(showLoading: Boolean = true) {
-    if (showLoading)
-      feedLiveData.value = Status.LOADING
+    if (showLoading) feedLiveData.value = Status.LOADING
     feedRepository.getFeed()
         .observeOn(AndroidSchedulers.mainThread())
         .subscribeOn(Schedulers.io())
-        .subscribeBy(onNext = { feed ->
-          when {
-            feed.rows.isEmpty() -> feedLiveData.value = Status.ERROR("No feeds")
-            else -> feedLiveData.value = Status.SUCCESS(feed)
-          }
-        },
-            onError = { feedLiveData.value = Status.ERROR("Unable to fetch feed") })
+        .subscribeBy(
+            onNext = { feed ->
+              when {
+                feed.rows.isEmpty() -> feedLiveData.value = Status.ERROR("No feeds")
+                else -> feedLiveData.value = Status.SUCCESS(feed)
+              }
+            },
+            onError = { feedLiveData.value = Status.ERROR("Unable to fetch feed") }
+            )
   }
 }
