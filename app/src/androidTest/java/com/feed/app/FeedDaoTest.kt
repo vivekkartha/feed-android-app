@@ -35,7 +35,7 @@ class FeedDaoTest {
     feedDao.insertAll(feed)
     feedDao.getAll()
         .test()
-        .assertValue { feeds -> feeds.rows.size == 2 }
+        .assertValue { feeds -> feeds.rows.size == 1 }
   }
 
   @Test
